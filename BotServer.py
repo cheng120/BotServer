@@ -22,7 +22,8 @@ def post_data():
         gid = 0
         if request.get_json().get('message_type') == 'group':  # 如果是群聊信息
             gid = request.get_json().get('group_id')  # 获取群号
-        api.route(request.get_json())  # 将 Q号和原始信息传到我们的后台
+        Api = api.Api(request.get_json())    
+        Api.route(request.get_json())  # 将 Q号和原始信息传到我们的后台
     return "end"
 
 
