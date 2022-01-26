@@ -98,3 +98,13 @@ class message :
             return message_body
         else:
             return self.all_message['message'] # 普通消息
+        
+    
+    def getAtUserId(self):
+        pattern = re.compile(r'(?<=qq=).*?(?=])')
+        at_uid = pattern.search(str(self.all_message['raw_message']))
+        if at_uid:
+            #匹配出CQ消息类型
+            return at_uid.group()
+        else:
+            return False # 未知消息类型

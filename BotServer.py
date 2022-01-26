@@ -1,4 +1,8 @@
+import re
 from flask import Flask, request
+from plugin.botData import botReturn
+
+from plugin.dice import Dice
 
 '''注意，这里的import api是另一个py文件，下文会提及'''
 import api
@@ -17,11 +21,6 @@ def post_data():
         return "alive"
     else:
         #记录CQ信息
-        print(request.get_data())
-        uid = request.get_json().get('sender').get('user_id')  # 获取信息发送者的 QQ号码
-        gid = 0
-        if request.get_json().get('message_type') == 'group':  # 如果是群聊信息
-            gid = request.get_json().get('group_id')  # 获取群号
         Api = api.Api(request.get_json())    
         Api.route(request.get_json())  # 将 Q号和原始信息传到我们的后台
     return "end"
@@ -30,7 +29,13 @@ def post_data():
 
 @app.route('/test', methods=["POST","GET"])
 def test():
-    return "end"
+    msg = request.args.get('msg', '')
+    re_msg = request.args.get('re_msg', '')
+    print("测试功能")
+    bot = botReturn()
+    res = bot.getMsg(msg)
+    print(res)
+    return res['returns']
 
 
 if __name__ == '__main__':
