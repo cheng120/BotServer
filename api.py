@@ -5,6 +5,7 @@ import requests
 import re
 import random
 import Cq_message
+from plugin.apex import ApexSearch
 from plugin.botData import botReturn
 import plugin.dice
 import pymongo
@@ -32,12 +33,12 @@ class Api:
     def route(self,message_info):
         if self.self_message_info.get_message_type() == "private":
             self.training_message_new()
+        '''映射关键字 分发方法'''
+        params_str = self.self_message_info.all_message['message'].strip()
+        params = params_str.split(" ")
         #判断是否是@触发
         if self.self_message_info.all_message['CQ_type'] == "at" :
             flag = True
-            '''映射关键字 分发方法'''
-            params_str = self.self_message_info.all_message['message'].strip()
-            params = params_str.split(" ")
             if params[0] == "setu":  # 你们懂的
                 '''分割参数'''
                 self.setu(self.self_message_info.all_message['group_id'], params[1:])
@@ -59,6 +60,9 @@ class Api:
                 self.client_to_conn(3)
             return 1
         else:
+            if params[0] == 'apex':  # 你们懂的
+                self.getApexRank(self.self_message_info.all_message['group_id'],params['1'])
+                flag = False
             rand = random.randint(1,100)
             if rand < 20:
                 self.client_to_conn(2)
@@ -106,12 +110,10 @@ class Api:
             "size": "original",
             "proxy": "i.pixiv.re"
         }
-        print(param)
         url = 'https://api.lolicon.app/setu/v2'
         menu = requests.post(url=url, json=param)
         data = menu.json()['data']
         if data == []:
-            print(data)
             return self.error(1)
         for item in data:
             setu_url = item['urls']['original']  # 对传回来的涩图网址进行数据提取
@@ -260,5 +262,9 @@ class Api:
         # client.send(payload.encode("utf-8"))
         # client.close()
 
+    def getApexRank(self,group_id,o_name):
+        msg = ApexSearch.SearchMember(o_name=o_name)
+        self.send_group_msg(group_id,message=msg)
+        pass
 
 

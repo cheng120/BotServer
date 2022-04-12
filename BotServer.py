@@ -1,5 +1,6 @@
 import re
 from flask import Flask, request
+from plugin.apex import ApexSearch
 from plugin.botData import botReturn
 
 from plugin.dice import Dice
@@ -36,6 +37,18 @@ def test():
     res = bot.getMsg(msg)
     print(res)
     return res['returns']
+
+@app.route('/apex', methods=["POST","GET"])
+def apex():
+    msg = request.args.get('msg', '')
+    re_msg = request.args.get('re_msg', '')
+    print("测试功能")
+    bot = ApexSearch().SearchMember(msg)
+    # res = bot.getMsg(msg)
+    # print(bot)
+    return bot
+    return "debug"
+
 
 
 if __name__ == '__main__':
